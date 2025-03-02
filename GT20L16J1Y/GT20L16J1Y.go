@@ -26,7 +26,7 @@ type Device struct {
 type Font struct {
 	FontHeight uint8
 	FontWidth  uint8
-	FontData   []byte
+	FontData   []uint16
 }
 
 type Fonts []Font
@@ -75,12 +75,7 @@ func (d *Device) ReadFonts(str string) Fonts {
 
 func (d *Device) PrintTerminal(fontsData Fonts) {
 	for i := 0; i < len(fontsData); i++ {
-		if fontsData[i].FontWidth == FontSize1ByteWidth {
-
-			printfont1byte(fontsData[i])
-		} else {
-			printfont2byte(fontsData[i])
-		}
+		printfont(fontsData[i])
 	}
 }
 
@@ -92,10 +87,12 @@ func (d *Device) readFontAscii(asciicode uint8) Font {
 	var address uint32
 	var i uint8
 	var data Font
+	var dt []byte
 
 	data.FontHeight = FontSize1ByteHeight
 	data.FontWidth = FontSize1ByteWidth
-	data.FontData = make([]byte, FontSize1Byte)
+	data.FontData = make([]uint16, FontSize1ByteWidth)
+	dt = make([]byte, FontSize1Byte)
 
 	if asciicode >= 0x20 && asciicode <= 0x7F {
 		address = (uint32(asciicode)-0x20)*16 + 255968
@@ -113,11 +110,13 @@ func (d *Device) readFontAscii(asciicode uint8) Font {
 
 	// フォントデータ読み込み
 	for i = 0; i < FontSize1Byte; i++ {
-		data.FontData[i], _ = d.spi.Transfer(0x00)
+		dt[i], _ = d.spi.Transfer(0x00)
 	}
 
 	d.csn.High()
-
+	for i = 0; i < FontSize1ByteWidth; i++ {
+		data.FontData[i] = uint16(dt[i+FontSize1ByteWidth])<<8 + uint16(dt[i])
+	}
 	return data
 }
 
@@ -128,9 +127,9 @@ func (d *Device) readFontJIS(code uint16) Font {
 	var msb, lsb uint32
 	var address uint32
 	var data Font
+	var dt []byte
 
 	// UTF-8->SJIS
-
 	c1 = uint8((code & 0xff00) >> 8)
 	c2 = uint8(code & 0x00ff)
 
@@ -182,8 +181,8 @@ func (d *Device) readFontJIS(code uint16) Font {
 
 	data.FontWidth = FontSize2ByteWidth
 	data.FontHeight = FontSize2ByteHeight
-	data.FontData = make([]byte, FontSize2Byte)
-
+	data.FontData = make([]uint16, FontSize2ByteWidth)
+	dt = make([]byte, FontSize2Byte)
 	/*漢字ROMにデータを送信*/
 	//フォントデータ読み込み
 	d.csn.Low()
@@ -197,51 +196,20 @@ func (d *Device) readFontJIS(code uint16) Font {
 
 	// フォントデータ読み込み
 	for i = 0; i < FontSize2Byte; i++ {
-		data.FontData[i], _ = d.spi.Transfer(0x00)
+		dt[i], _ = d.spi.Transfer(0x00)
 	}
 	d.csn.High()
-
+	for i = 0; i < FontSize2ByteWidth; i++ {
+		data.FontData[i] = uint16(dt[i+FontSize2ByteWidth])<<8 + uint16(dt[i])
+	}
 	return data
 }
 
 // ターミナル表示用(半角)
-func printfont1byte(data Font) {
-	for y := 0; y < 8; y++ {
-		for x := 0; x < 8; x++ {
-			if data.FontData[x]&(0x01<<y) != 0x00 {
-				fmt.Printf("xx")
-			} else {
-				fmt.Printf("--")
-			}
-		}
-		fmt.Printf("\n")
-	}
-	for y := 0; y < 8; y++ {
-		for x := 8; x < 16; x++ {
-			if data.FontData[x]&(0x01<<y) != 0x00 {
-				fmt.Printf("xx")
-			} else {
-				fmt.Printf("--")
-			}
-		}
-		fmt.Printf("\n")
-	}
-}
-
-// ターミナル表示用(全角)
-func printfont2byte(data Font) {
-	for y := 0; y < 8; y++ {
-		for x := 0; x < 16; x++ {
-			if data.FontData[x]&(0x01<<y) != 0x00 {
-				fmt.Printf("xx")
-			} else {
-				fmt.Printf("--")
-			}
-		}
-		fmt.Printf("\n")
-	}
-	for y := 0; y < 8; y++ {
-		for x := 16; x < 32; x++ {
+func printfont(data Font) {
+	var x, y uint8
+	for y = 0; y < data.FontHeight; y++ {
+		for x = 0; x < data.FontWidth; x++ {
 			if data.FontData[x]&(0x01<<y) != 0x00 {
 				fmt.Printf("xx")
 			} else {
