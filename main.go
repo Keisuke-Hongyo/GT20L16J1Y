@@ -25,7 +25,7 @@ func main() {
 
 	gt.Initialize()
 
-	s := "a本行　ケイスケ"
+	s := "テストプログラム Ver1"
 
 	for {
 		led.Low()
