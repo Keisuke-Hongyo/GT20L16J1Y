@@ -62,9 +62,11 @@ func (d *Device) ReadFonts(str string) Fonts {
 	cnt = 0
 	for cnt < ln {
 		if (sjisStr[cnt] < 0x80) || ((0xa0 < sjisStr[cnt]) && (sjisStr[cnt] <= 0xdF)) {
+			// 半角処理
 			fontsdata = append(fontsdata, d.readFontAscii(sjisStr[cnt]))
 			cnt++
 		} else {
+			// 全角処理
 			fontsdata = append(fontsdata, d.readFontJIS(uint16(sjisStr[cnt])<<8|uint16(sjisStr[cnt+1])))
 			cnt += 2
 		}
@@ -75,6 +77,7 @@ func (d *Device) ReadFonts(str string) Fonts {
 
 func (d *Device) PrintTerminal(fontsData Fonts) {
 	for i := 0; i < len(fontsData); i++ {
+		// Font Data Output
 		printfont(fontsData[i])
 	}
 }
@@ -114,6 +117,8 @@ func (d *Device) readFontAscii(asciicode uint8) Font {
 	}
 
 	d.csn.High()
+
+	// 16bitデータに変換
 	for i = 0; i < FontSize1ByteWidth; i++ {
 		data.FontData[i] = uint16(dt[i+FontSize1ByteWidth])<<8 + uint16(dt[i])
 	}
@@ -199,6 +204,8 @@ func (d *Device) readFontJIS(code uint16) Font {
 		dt[i], _ = d.spi.Transfer(0x00)
 	}
 	d.csn.High()
+
+	// 16bitデータに変換
 	for i = 0; i < FontSize2ByteWidth; i++ {
 		data.FontData[i] = uint16(dt[i+FontSize2ByteWidth])<<8 + uint16(dt[i])
 	}
