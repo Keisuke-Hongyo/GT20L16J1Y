@@ -24,8 +24,8 @@ type Device struct {
 }
 
 type Font struct {
-	FontHeight uint8
-	FontWidth  uint8
+	FontHeight int16
+	FontWidth  int16
 	FontData   []uint16
 }
 
@@ -214,7 +214,7 @@ func (d *Device) readFontJIS(code uint16) Font {
 
 // ターミナル表示用(半角)
 func printfont(data Font) {
-	var x, y uint8
+	var x, y int16
 	for y = 0; y < data.FontHeight; y++ {
 		for x = 0; x < data.FontWidth; x++ {
 			if data.FontData[x]&(0x01<<y) != 0x00 {

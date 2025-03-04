@@ -4,8 +4,9 @@ package main
 
 import (
 	"GT20L16J1Y/GT20L16J1Y"
+	"GT20L16J1Y/OLED"
 	"machine"
-	"time"
+	"tinygo.org/x/drivers/ssd1306"
 )
 
 func main() {
@@ -25,13 +26,33 @@ func main() {
 
 	gt.Initialize()
 
-	s := "テストプログラム Ver1"
+	machine.I2C0.Configure(machine.I2CConfig{
+		Frequency: 400 * machine.KHz,
+	})
+	dev := ssd1306.NewI2C(machine.I2C0)
 
+	dev.Configure(ssd1306.Config{
+		Address: 0x3C,
+		Width:   128,
+		Height:  64,
+	})
+
+	dev.ClearBuffer()
+	dev.ClearDisplay()
+
+	//font library init
+	display := OLED.NewDisplay(dev, gt)
+
+	//s := "テストプログラム Ver1"
 	for {
-		led.Low()
-		time.Sleep(100 * time.Millisecond)
-		led.High()
-		time.Sleep(100 * time.Millisecond)
-		gt.PrintTerminal(gt.ReadFonts(s))
+		// led.Low()
+		// time.Sleep(100 * time.Millisecond)
+		// led.High()
+		// time.Sleep(100 * time.Millisecond)
+
+		display.LcdPrint(0, 0, "本行圭介")
+		display.LcdPrint(0, 0+16, "本行駿介")
+
+		//gt.PrintTerminal(gt.ReadFonts(s))
 	}
 }
