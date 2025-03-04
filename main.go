@@ -1,7 +1,5 @@
 package main
 
-// This is the most minimal blinky example and should run almost everywhere.
-
 import (
 	"GT20L16J1Y/GT20L16J1Y"
 	"GT20L16J1Y/OLED"
@@ -26,7 +24,7 @@ func main() {
 
 	gt.Initialize()
 
-	machine.I2C0.Configure(machine.I2CConfig{
+	_ = machine.I2C0.Configure(machine.I2CConfig{
 		Frequency: 400 * machine.KHz,
 	})
 	dev := ssd1306.NewI2C(machine.I2C0)
