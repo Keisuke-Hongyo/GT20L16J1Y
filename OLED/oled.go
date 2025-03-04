@@ -42,9 +42,9 @@ func (d *Display) printChar(font GT20L16J1Y.Font) {
 	for y = 0; y < font.FontHeight; y++ {
 		for x = 0; x < font.FontWidth; x++ {
 			if font.FontData[x]&(0x01<<y) != 0x00 {
-				d.device.SetPixel(x+d.XPos, y+d.YPos, color.RGBA{255, 255, 255, 255})
+				d.device.SetPixel(x+d.XPos, y+d.YPos, color.RGBA{255, 255, 255, 0})
 			} else {
-				d.device.SetPixel(x+d.XPos, x+d.YPos, color.RGBA{0, 0, 0, 255})
+				d.device.SetPixel(x+d.XPos, y+d.YPos, color.RGBA{0, 0, 0, 0})
 			}
 		}
 	}
