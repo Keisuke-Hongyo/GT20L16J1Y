@@ -48,8 +48,8 @@ func main() {
 		// led.High()
 		// time.Sleep(100 * time.Millisecond)
 
-		display.LcdPrint(0, 0, "本行圭介")
-		display.LcdPrint(0, 0+16, "本行駿介")
+		display.LcdPrint(0, 0, "本行 圭介")
+		display.LcdPrint(0, 0+18, "本行 駿介")
 
 		//gt.PrintTerminal(gt.ReadFonts(s))
 	}

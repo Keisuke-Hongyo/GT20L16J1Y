@@ -1,20 +1,23 @@
 package GT20L16J1Y
 
 import (
-	"fmt"
+	//"fmt"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
 	"machine"
 	"time"
 )
 
-const FontSize2Byte = 32
-const FontSize2ByteWidth = 16
-const FontSize2ByteHeight = 16
+// フォントサイズ
+const (
+	FontSize2Byte       = 32
+	FontSize2ByteWidth  = 16
+	FontSize2ByteHeight = 16
 
-const FontSize1Byte = 16
-const FontSize1ByteWidth = 8
-const FontSize1ByteHeight = 16
+	FontSize1Byte       = 16
+	FontSize1ByteWidth  = 8
+	FontSize1ByteHeight = 16
+)
 
 var err error
 
@@ -73,13 +76,6 @@ func (d *Device) ReadFonts(str string) Fonts {
 	}
 
 	return fontsdata
-}
-
-func (d *Device) PrintTerminal(fontsData Fonts) {
-	for i := 0; i < len(fontsData); i++ {
-		// Font Data Output
-		printfont(fontsData[i])
-	}
 }
 
 // Local Function
@@ -212,8 +208,16 @@ func (d *Device) readFontJIS(code uint16) Font {
 	return data
 }
 
+/*
+func (d *Device) PrintTerminal(fontsData Fonts) {
+	for i := 0; i < len(fontsData); i++ {
+		// Font Data Output
+		printfont(fontsData[i])
+	}
+}
+*/
 // ターミナル表示用(半角)
-func printfont(data Font) {
+/*func printfont(data Font) {
 	var x, y int16
 	for y = 0; y < data.FontHeight; y++ {
 		for x = 0; x < data.FontWidth; x++ {
@@ -225,4 +229,4 @@ func printfont(data Font) {
 		}
 		fmt.Printf("\n")
 	}
-}
+}*/
