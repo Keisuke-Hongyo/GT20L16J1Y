@@ -40,13 +40,12 @@ func main() {
 		Height:  64,
 	})
 
-	dev.ClearBuffer()
-	dev.ClearDisplay()
-
 	display := OLED.NewDisplay(dev, gt)
+	display.ClearBuffer()
+	display.ClearDisplay()
 
-	display.LcdPrint(0, 0+0, "本行　駿介")
-	display.LcdPrint(0, 0+20, "本行　すず")
+	display.LcdPrint(0, 0+0, "今日の天気")
+	display.LcdPrint(0, 0+20, "晴れのち曇り")
 	cnt := 0
 
 	for {
@@ -54,6 +53,9 @@ func main() {
 		time.Sleep(100 * time.Millisecond)
 		led.High()
 		time.Sleep(100 * time.Millisecond)
+		if cnt >= 1000 {
+			cnt = 0
+		}
 		str := fmt.Sprintf("CNT:%3d", cnt)
 		display.LcdPrint(0, 40, str)
 		cnt++

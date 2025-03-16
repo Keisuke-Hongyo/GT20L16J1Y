@@ -24,6 +24,14 @@ func (d *Display) LcdPrint(x int16, y int16, str string) {
 	d.printText(str)
 }
 
+func (d *Display) ClearBuffer() {
+	d.device.ClearBuffer()
+}
+
+func (d *Display) ClearDisplay() {
+	d.device.ClearDisplay()
+}
+
 func (d *Display) printText(str string) {
 	var f GT20L16J1Y.Fonts
 	tmp := d.XPos

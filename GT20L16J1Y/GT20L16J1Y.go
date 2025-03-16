@@ -1,6 +1,7 @@
 package GT20L16J1Y
 
 import (
+	"fmt"
 	//"fmt"
 	"golang.org/x/text/encoding/japanese"
 	"golang.org/x/text/transform"
@@ -27,8 +28,8 @@ type Device struct {
 }
 
 type Font struct {
-	FontHeight int16
-	FontWidth  int16
+	FontHeight uint16
+	FontWidth  uint16
 	FontData   []uint16
 }
 
@@ -208,17 +209,16 @@ func (d *Device) readFontJIS(code uint16) Font {
 	return data
 }
 
-/*
 func (d *Device) PrintTerminal(fontsData Fonts) {
 	for i := 0; i < len(fontsData); i++ {
 		// Font Data Output
 		printfont(fontsData[i])
 	}
 }
-*/
+
 // ターミナル表示用(半角)
-/*func printfont(data Font) {
-	var x, y int16
+func printfont(data Font) {
+	var x, y uint16
 	for y = 0; y < data.FontHeight; y++ {
 		for x = 0; x < data.FontWidth; x++ {
 			if data.FontData[x]&(0x01<<y) != 0x00 {
@@ -229,4 +229,4 @@ func (d *Device) PrintTerminal(fontsData Fonts) {
 		}
 		fmt.Printf("\n")
 	}
-}*/
+}
